@@ -8,7 +8,6 @@ class cached_property(object):
         self.__module__ = fget.__module__
         self._key = "_%s" % fget.__name__
 
-
     def __get__(self, obj, cls):
         if obj is None:
             return self
@@ -17,7 +16,6 @@ class cached_property(object):
             value = self.fget(obj)
             setattr(obj, self._key, value)
         return value
-
 
     def __set__(self, obj, value):
         setattr(obj, self._key, value)

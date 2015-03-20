@@ -1,14 +1,20 @@
-import warnings
+import warnings, datetime
+
 from surveymonkey.exceptions import SurveyMonkeyWarning
+
+
 
 class Call(object):
     """ Base class for all API calls """
 
     _api = None
+    date_params = (
+        'start_date', 'end_date', 'start_modified_date', 'end_modified_date'
+    )
 
     @property
     def call_name(self):
-        raise NotImplementedError("call_name is required")
+        return self.__class__.__name__.lower()
 
     def __init__(self, api):
         self._api = api
@@ -36,4 +42,8 @@ class Call(object):
                     "parameters are: '%s'." % (uri, ', '.join(func.allowed_params), 
                                                ', '.join(unrecognized_params)))
                 warnings.warn(err_msg, SurveyMonkeyWarning)
+        for name in self.date_params:
+            value = params.get(name)
+            if value is not None and isinstance(datetime.date):
+                params[name] = value.strftime("%Y-%m-%d %H:%M:%S")
         return self._api.call(uri, params=params, **control_kwargs)
