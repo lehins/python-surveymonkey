@@ -80,7 +80,8 @@ class SurveyMonkey(object):
         
     def call(self, uri, params=None, timeout=None, access_token=None):
         url = self.api_endpoint + uri
-        data = json.dumps(params or {})
+        params = params or {}
+        data = json.dumps(params)
         timeout = timeout or self._timeout
         client = self.client if access_token is None \
                  else self._get_client(access_token)
@@ -88,6 +89,8 @@ class SurveyMonkey(object):
             raise TypeError("access_token is required to make an API call.")
         try:
             response = client.post(url, data=data, timeout=timeout)
+            response.url = url
+            response.params = params
         except requests.exceptions.RequestException as exc:
             raise APIRequestError(exc.response, exc)
         return APIResponse(response)

@@ -2,8 +2,23 @@ from surveymonkey.calls.base import Call
 
 
 class Surveys(Call):
+    survey_fields = [
+        'title', 'analysis_url', 'preview_url', 'date_created', 'date_modified',
+        'language_id', 'question_count', 'num_responses'
+    ]
+    collector_fields = [
+        'url', 'open', 'type', 'name', 'date_created', 'date_modified'
+    ]
+    respondent_fields = [
+        'date_start', 'date_modified', 'collector_id', 'collection_mode',
+        'custom_id', 'email', 'first_name', 'last_name', 'ip_address', 'status',
+        'analysis_url', 'recipient_id'
+    ]
 
     def __get_survey_list(self, **kwargs):
+        fields = kwargs.get('fields', None)
+        if fields is not None and not fields:
+            kwargs['fields'] = self.survey_fields
         return self.make_call(self.__get_survey_list, {}, kwargs)
     __get_survey_list.allowed_params = [
         'page', 'page_size', 'start_date', 'end_date', 'title', 'recipient_email',
@@ -25,6 +40,9 @@ class Surveys(Call):
         params = {
             'survey_id': survey_id
         }
+        fields = kwargs.get('fields', None)
+        if fields is not None and not fields:
+            kwargs['fields'] = self.colector_fields
         return self.make_call(self.__get_collector_list, params, kwargs)
     __get_collector_list.allowed_params = [
         'survey_id', 'page', 'page_size', 'start_date', 'end_date', 'name',
@@ -36,6 +54,9 @@ class Surveys(Call):
         params = {
             'survey_id': survey_id
         }
+        fields = kwargs.get('fields', None)
+        if fields is not None and not fields:
+            kwargs['fields'] = self.respondent_fields
         return self.make_call(self.__get_respondent_list, params, kwargs)
     __get_respondent_list.allowed_params = [
         'survey_id', 'collector_id', 'page', 'page_size', 'start_date', 'end_date', 
